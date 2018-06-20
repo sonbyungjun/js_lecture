@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+        <script src="./jquery.js"></script>
+        <style>
+            button{
+                background-color: red;
+
+            }
+            .btn1{
+                background-color: green;
+                width: 100px;
+                height: 50px;
+                margin: 10px;
+                display: none;
+            }
+            /*  class는 . */
+            .border{
+                border: 3px black solid;
+            }
+            /* id는 # */
+            #btn2{
+                background-color: blue;
+                width: 100px;
+                height: 50px;
+            }
+            .btn_group div:last-child{
+                background-color: black;   
+                width: 100px;
+                height: 50px;
+                margin: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <button>진짜버튼</button>
+        <div class="btn_group">
+            <div class="btn1 border">버튼1</div>
+            <div id="btn2">버튼2</div>
+            <div>버튼3</div>
+        </div>
+        
+        <script>
+            $("button").hide(1000)
+            $(".btn1").show(1000)
+            var text = $("#btn2").text()
+            console.log(text)
+            $("#btn2").text("버튼투")
+
+            var html = $(".btn_group").html()
+            console.log(html)
+
+            $(".btn_group").html(
+                "<h1>버튼</h1>"
+            )
+        </script>
+    </body>
+</html>

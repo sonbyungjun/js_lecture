@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script>        
+    </head>
+    <body>
+        <div class="content"></div>
+        <button class="btn1">버튼1</button>
+        <button class="btn2">버튼2</button>
+        <button class="btn3">버튼3</button>
+        <button class="btn4">전제삭제</button>
+        <button class="btn5">추가</button>
+        <button class="btn6">앞추가</button>
+        
+            <script>
+            $(".btn1").on("click", function(){
+                alert("버튼원을 눌렀다.")
+            })
+            // 버튼2를 눌렀을때   익명함수가 실행된다.
+            $(".btn2").on("click", function(){
+                // 그 익명함수의 기능은
+                // .content의 속 텍스트를 안녕하세요로 바꾼다.
+                $(".content").text("안녕하세요")
+            })
+            $(".btn3").on("click", function(){
+                var html = "<table border='2'>\
+                                <tr>\
+                                    <td>이름</td>\
+                                    <td>나이</td>\
+                                    <td>성별</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>김종인</td>\
+                                    <td colspan='2'>26</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>박종인</td>\
+                                    <td colspan='2'>46</td>\
+                                </tr>\
+                            </table>"
+                $(".content").html(html)
+            })
+            $(".btn4").on("click", function(){
+                // $(".content").remove()
+                $(".content").html("")
+            })
+            $(".btn5").on("click", function(){
+                var html = "<hr>"
+                $(".content").append(html)
+            })
+            $(".btn6").on("click", function(){
+                var html = "<hr>"
+                $(".content").prepend(html)
+            })
+        </script>
+    </body>
+
+
+
+</html>

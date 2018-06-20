@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script>
+        <style>
+            .memo_list .memo{
+                margin-top: 15px;
+            }
+        </style>    
+    </head>
+    <body>
+        <h1>메모장</h1>
+        메모 : <input type="text" id="memo_input" placeholder="메모를 입력하시오">
+        <button id="save">저장</button>
+        <ul class="memo_list">
+            <li class="memo">
+                <span class="text">기본 메모 테스트</span>
+                <button class="memo_delete">삭제</button>
+                <button class="memo_modify">수정</button>
+            </li>
+        </ul>
+        <script>
+            //추가
+            $("#save").on("click", function(){
+                var memoVal = $("#memo_input").val()
+                if(memoVal.length<1){
+                    alert("메모를 입력하세요")
+                    return
+                }
+                var html = "<li class='memo'>\
+                                <span class='text'>"+memoVal+"</span>\
+                                <button class='memo_delete'>삭제</button>\
+                                <button class='memo_modify'>수정</button>\
+                                </li>"
+                $(".memo_list").append(html)
+                $("#memo_input").val("")
+            })
+            // 삭제         // delegate 기법
+            $("body").on("click", ".memo_delete", function(){
+                $(this).parents(".memo").remove()
+            })
+            // 수정
+            $("body").on("click", ".memo_modify", function(){
+                var val = $(this).parents(".memo").find(".text").text() // 오리지널 값
+                var html = "<input type='text' class='memo_modify_input' value='"+val+"'>"
+                html += "<input type='hidden' class='origin_memo' value='"+val+"'>"
+                // html = html + "<>"
+                $(this).parents(".memo").find(".text").html(html)
+                $(this).hide() // 수정 숨김
+                // 수정 눌렀을때 수정완료 수정취소 추가하기
+                var btn = "<button class='memo_modify_com'>수정완료</button>\
+                        <button class='memo_modify_cancel'>수정취소</button>"
+                $(this).parent().append(btn)
+            })
+            $("body").on("click", ".memo_modify_com", function(){
+                var memoModify = $(".memo_modify_input").val()
+                if(memoModify.length<1){
+                    alert("수정된 메모를 입력하세요")
+                    return
+                }
+                var htmlM = "<li class='memo'>\
+                            <span class='text'>"+memoModify+"</span>\
+                            <button class='memo_delete'>삭제</button>\
+                            <button class='memo_modify'>수정</button>\
+                            </li>"
+                $(this).parents(".memo").html(htmlM)
+            })
+            // 수정취소 기능 구현
+            $("body").on("click", ".memo_modify_cancel", function(){
+                var origin = $(this).parents(".memo").find(".origin_memo")
+                var val = origin.val()
+                origin.remove()
+                var memoModifyCancel = "<li class='memo'>\
+                            <span class='text'>"+val+"</span>\
+                            <button class='memo_delete'>삭제</button>\
+                            <button class='memo_modify'>수정</button>\
+                            </li>"
+                $(this).parents(".memo").html(memoModifyCancel)
+            })      
+        </script>
+    </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script>
+        <style>
+            .memo_list .memo{
+                margin-top: 15px;
+            }
+        </style>        
+    </head>
+    <body>
+        <h1>메모장</h1>
+        메모 : <input type="text" id="memo_input" placeholder="메모를 입력하시오">
+        <button id="save">저장</button>
+        <ul class="memo_list">
+            <li class="memo">
+                <span class="text">기본 메모 테스트</span>
+                <button class="memo_delete">삭제</button>
+                <button class="memo_modify">수정</button>                
+            </li>
+        </ul>
+        <script>
+            //추가
+            $("#save").on("click", function(){
+                var memoVal = $("#memo_input").val()
+                if(memoVal.length<1){
+                    alert("메모를 입력하세요")
+                    return
+                }
+            
+                var html = "<li class='memo'>\
+                               <span class='text'>"+memoVal+"</span>\
+                               <button class='memo_delete'>삭제</button>\
+                               <button class='memo_modify'>수정</button>\
+                            </li>"
+                $(".memo_list").append(html)
+                $("#memo_input").val("")            
+            })
+            // 삭제         // delegate 기법
+            $("body").on("click", ".memo_delete", function(){
+                $(this).parents(".memo").remove() // parents 는 모든 부모 parent 자기 바로위 부모 하나
+            })
+            $("body").on("click", ".memo_modify", function(){
+                var val = $(this).parents(".memo").find(".text").text() // find 자기 자식의 모든것
+                var html = "<input type='text' class='memo_modify_input' value='"+val+"'>"
+                $(this).parents(".memo").find(".text").html(html)
+                $(this).hide()                
+            })
+
+        </script>
+    </body>
+</html>

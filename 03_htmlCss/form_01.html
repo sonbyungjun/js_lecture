@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+    </head>
+    <body>
+        <form action="" method="GET">
+            <input type="hidden" name="hide" value="????">
+            <p>
+                id : <input type="text" name="id" required placeholder="3자 이상 입력해">
+            </p>
+            <p>
+                pw : <input type="password" name="pw">            
+            </p>
+            <p>
+                자기소개 : <textarea name="intro"></textarea>
+            </p>
+            <p>
+                ph : <input type="number" name="ph">
+            </p>
+            <p>
+                생년월일 : <input type="date" name="birth">
+            </p>
+            <p>
+                email : <input type="email" name="email">
+            </p>
+            <p>
+                <h4>보유기술</h4>
+                <label for="html"> html : </label><input type="checkbox" name="skill" id="html" value="html" checked>
+                <label for="css"> css : </label><input type="checkbox" name="skill" id="css" value="css">
+                <label for="js"> js : </label><input type="checkbox" name="skill" id="js" value="js"> 
+            </p>
+            <p>
+                    <h4>성별</h4>
+                    <label for="m"> 남자 : </label><input type="radio" name="gender" id="m" value="male">
+                    <label for="f"> 여자 : </label><input type="radio" name="gender" id="f" value="female">
+            </p>
+            <p>
+                <h4>직업</h4>
+                <select name="job">
+                    <option value="bm">직장인</option>
+                    <option value="army">군인</option>
+                    <option value="stud">학생</option>                    
+                    <option value="mom">주부</option>                    
+                </select>
+            </p>
+            <p>
+                <input type="file" name="profile">
+            </p>
+            <p>
+                <button type="submit">전송</button>
+            </p>
+        </form>
+    </body>
+</html>

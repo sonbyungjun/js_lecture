@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script> 
+        <style>
+            .warn{
+                color: red;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>네이버 인물검색</h1>
+        인물 검색어 : <input type="text" id="query">
+        <button id="search">검색</button>
+
+        <div class="warn"></div>
+        <div class="result"></div>
+        <script>
+            /*
+            https://search.naver.com/search.naver
+            where=nexearch
+            sm=top_hty
+            fbm=0&ie=utf8
+            query=박지성
+            */
+            $("#query").on("keyup", function(event){
+                if($(this).val().length<2){
+                    $(".warn").text("2글자 이상 입력하세요")
+                }else{
+                    $(".warn").text("")
+                }
+                if(event.keyCode != 13){
+                    return
+                }
+                $.ajax({
+                    method : "get",
+                    url : "https://search.naver.com/search.naver",
+                    data : {
+                        where : "nexearch",
+                        sm : "top_hty",
+                        fbm : "0",
+                        ie : "utf8",
+                        query : $("#query").val(),
+                    },
+                    dataType : "html",
+                    success : function(data){
+                        var html = $(data).find(".profile_wrap").html()
+                        $(".result").html(html)
+                    },
+                    error : function(){
+                        alert("서버통신 실패!")
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>

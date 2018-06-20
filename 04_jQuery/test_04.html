@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script>        
+    </head>
+    <body>
+        id : <input type="text" id="id">
+        <span class="id_warn"></span>
+        <br>
+        pw : <input type="password" id="pw">
+        <br>
+        <button id="login">로그인</button>
+        
+        <script>
+            $("#login").on("click", function(){
+                $.ajax({
+                    method : "get",
+                    url : "/login",
+                    dataType : "json",
+                    data : {
+                        id : $("#id").val(),
+                        pw : $("#pw").val()                    
+                    },
+                    success : function(){
+                        console.log("통신 성공")
+                    },
+                    error : function(){
+                        console.log("통신 실패")
+                    }
+                })
+            })
+
+        </script>
+    </body>
+</html>

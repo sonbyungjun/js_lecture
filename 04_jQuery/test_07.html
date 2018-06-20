@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script>        
+        
+    </head>
+    <body>
+        
+        <div class="content" data-origin="">
+            김종인
+        </div>
+        <button class="btn">버튼</button>
+        <button class="btn2">되돌리기</button>        
+
+
+        <script>
+            $(".btn").on("click", function(){
+                var origin = $(".content").text().trim()
+                // $(".content").attr("data-origin", origin)
+                $(".content").data("origin", origin)                
+                $(".content").text("손병준")
+            })
+            $(".btn2").click(function(){
+                var origin = $(".content").data("origin")
+                $(".content").text(origin)
+            })
+        </script>
+    </body>
+</html>
