@@ -11,4 +11,4 @@ console.log(cal)
 
 console.log(cal.add(100,200));
 console.log(cal.sub(100,200));
-console.log(cal.name + "님");
+console.log(cal.name + "님"); 
