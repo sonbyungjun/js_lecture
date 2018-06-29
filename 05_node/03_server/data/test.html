@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>베이직</title>
+        <script src="./jquery.js"></script>        
+    </head>
+    <body>
+        id : <input type="text" id="id">
+        <span class="id_warn"></span>
+        <br>
+        pw : <input type="password" id="pw">
+        <br>
+        <button id="login">로그인</button>
+        
+        <script>
+            var checkId = false;
+            $("#login").on("click", function(){
+                var id = $("#id").val()
+                var pw = $("#pw").val()
+                if (checkId && pw.length>0){
+                    alert(id + " , " + pw)
+                }else{
+                    alert("제대로 입력하세요")
+                }
+            })
+            $("#id").on("keyup", function(){
+                // var id = $("#id").val()
+                var id = $(this).val()
+                if(id.length<4){
+                    $(".id_warn").html("4자리 이상 입력하세요")
+                 checkId = false
+                }else{
+                    $(".id_warn").html("")
+                 checkId = true
+                }
+            })
+        </script>
+    </body>
+</html>
