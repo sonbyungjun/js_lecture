@@ -19,13 +19,16 @@ var connection = mysql.createConnection({
 
 //  SQL 실행하기 - 비동기적 실행처리
 // 그렇기에 콜백함수 필수
-  connection.query(`insert into users(id, pw, name, age, gender) values('fff', '111', '김수민', 36 , 'M');`, function (error, results, fields) {
+  connection.query(`insert into users(id, pw, name, age, gender) values('ffdfff', '111', '김수민', 36 , 'M');`, function (error, results, fields) {
     if (error) throw error;
-    for(row of results){
-        console.log("============")
-        console.log(row)
-        console.log("============")
-    }
+    connection.query(`SELECT * from users`, function (error, results, fields) {
+      if (error) throw error;
+      for(row of results){
+          console.log("============")
+          console.log(row)
+          console.log("============")
+      }
+    });
   });
   // 연결종료
   // 없어도 DB 작업이 끝나면 자동 호출된다.
