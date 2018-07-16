@@ -39,7 +39,7 @@ router.post("/signup", function(req, res){
             return;
         }
         // res.render("login");
-        res.redirect('user/login');
+        res.redirect('/user/login');
     })
 });
 
@@ -70,6 +70,27 @@ router.get("/delete", function(req, res, next){
         if(err){
             return next(err);
         }
+        res.redirect('/user/list');
+    })
+})
+
+// router.get("/update", function(req, res){
+//     console.log("회원정보수정");
+//     res.render('user/update')
+// });
+
+router.post("/update", function(req, res){
+    var arr = [];
+    for(var key in req.body){
+        arr.push(req.body[key]);
+    }
+    console.log(arr)
+
+    userDAO.update(arr, function(err, result){
+        if(err){
+            return;
+        }
+        // res.render("login");
         res.redirect('/user/list');
     })
 })

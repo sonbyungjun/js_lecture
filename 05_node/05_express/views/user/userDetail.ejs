@@ -7,7 +7,7 @@
     <h1><%=user.name%>님의 회원정보 입니다</h1>
     <p>가입일 : <%= user.reg_date%></p>
 
-    <form action="/user/signup" method="POST">
+    <form action="/user/update" method="POST">
         <p>
             id : <input type="text" name="id" value="<%=user.id%>">
         </p>
@@ -20,13 +20,17 @@
         <p>
             나이 : <input type="number" name="age" value="<%=user.age%>">
         </p>
+        
         <p>
             성별<br>
             남 : <input type="radio" name="gender" value="M" <%=user.gender=='M' ? 'checked' : ''%>>
             여 : <input type="radio" name="gender" value="F" <%=user.gender=='F' ? 'checked' : ''%>>
         </p>
         <p>
-            <button type="submit">회원정보 수정</button>
+            <input hidden type="number" name="no" value="<%=user.no%>"
+        </p>
+        <p>
+            <button type="submit" id="update_btn">회원정보 수정</button>
             <button type="button" id="delete_btn">회원 삭제</button>
 
         </p>
@@ -41,6 +45,12 @@
         $("#delete_btn").on("click", function(){
             if(confirm('정말로 삭제하시겠습니까?')){
                 location.href = '/user/delete?no=<%=user.no%>'
+            }
+        })
+
+        $("#update_btn").on("click", function(){
+            if(confirm('정말로 수정하시겠습니까?')){
+                location.href = '/user/update?no=<%=user.no%>'
             }
         })
     </script>

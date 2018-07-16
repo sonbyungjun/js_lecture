@@ -56,6 +56,18 @@ var userDAO = {
             }
             callback(null, results);
         })
+    },
+
+    update : function(no, callback){
+        var sql = `update users set id = ?, pw = ?, name = ?, age = ?, gender = ? where no = ?`
+ 
+        con.query(sql, no, function(err, results, fields){
+            if(err){
+                callback(err)
+                return;
+            }
+            callback(null, results);
+        })
     }
 
 }
