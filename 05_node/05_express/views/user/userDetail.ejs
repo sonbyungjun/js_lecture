@@ -7,7 +7,7 @@
     <h1><%=user.name%>님의 회원정보 입니다</h1>
     <p>가입일 : <%= user.reg_date%></p>
 
-    <form action="/user/update" method="POST">
+    <form action="/user/update?no=<%=user.no%>" method="POST">
         <p>
             id : <input type="text" name="id" value="<%=user.id%>">
         </p>
@@ -27,9 +27,7 @@
             여 : <input type="radio" name="gender" value="F" <%=user.gender=='F' ? 'checked' : ''%>>
         </p>
         <p>
-            <input hidden type="number" name="no" value="<%=user.no%>"
-        </p>
-        <p>
+            <!-- 폼테크 안에 버튼타입이 submit 이면 무조건 submit 함.-->
             <button type="submit" id="update_btn">회원정보 수정</button>
             <button type="button" id="delete_btn">회원 삭제</button>
 
@@ -49,8 +47,10 @@
         })
 
         $("#update_btn").on("click", function(){
-            if(confirm('정말로 수정하시겠습니까?')){
-                location.href = '/user/update?no=<%=user.no%>'
+            if(confirm('정말로 수정 하시겠습니까?')){
+                return true;
+            }else{
+                return false;
             }
         })
     </script>

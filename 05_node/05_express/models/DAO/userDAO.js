@@ -14,7 +14,8 @@ var userDAO = {
     },
 
     signup : function(arr, callback){
-        var sql = `insert into users(id, pw, name, age, gender) values(?, ?, ?, ?, ?);`
+        // var sql = `insert into users(id, pw, name, age, gender) values(?, ?, ?, ?, ?);`
+        var sql = `insert into users set ?;`
         con.query(sql, arr, function(err, results, fields){
             if(err){
                 callback(err)
@@ -58,10 +59,12 @@ var userDAO = {
         })
     },
 
-    update : function(no, callback){
-        var sql = `update users set id = ?, pw = ?, name = ?, age = ?, gender = ? where no = ?`
+    update : function(arr, callback){
+        var sql = `update users 
+                        set ?
+                    where no = ?`
  
-        con.query(sql, no, function(err, results, fields){
+        con.query(sql, arr, function(err, results, fields){
             if(err){
                 callback(err)
                 return;

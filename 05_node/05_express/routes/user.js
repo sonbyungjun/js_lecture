@@ -1,11 +1,18 @@
 var express = require('express');
 var router = express.Router();
-
+var middle = require('./middelware.js')
 var userDAO = require('../models/dao/userDAO');
 
 router.get("/login", function(req, res){
     console.log("로그인");
     res.render('user/login')
+});
+
+router.get("/logout", function(req, res){
+    console.log("로그아웃");
+    req.session.destroy();
+    res.clearCookie('user');
+    res.redirect('/');
 });
 
 router.post("/login", function(req, res){
@@ -16,12 +23,13 @@ router.post("/login", function(req, res){
     userDAO.login(arr, function(err, result){
         if(err){
             // next(err);
-            return;
+            return next(err);;
         }
-        // res.render("index", {user : result[0]});
+        req.session.user = result[0];
         res.redirect('/');
     })
 });
+
 
 router.get("/signup", function(req, res){
     console.log("회원가입");
@@ -29,25 +37,22 @@ router.get("/signup", function(req, res){
 });
 
 router.post("/signup", function(req, res){
-    var arr = []
-    for(var key in req.body){
-        arr.push(req.body[key])
-    }
+    // var arr = [req.body]
+    // for(var key in req.body){
+    //     arr.push(req.body[key])
+    // }
 
-    userDAO.signup(arr, function(err, result){
-        if(err){
-            return;
-        }
+    userDAO.signup(req.body, function(err, result){
+        if(err) return next(err);;
         // res.render("login");
         res.redirect('/user/login');
     })
 });
 
-router.get("/list", function(req, res, next){
+router.get("/list", middle.isLogin(), function(req, res, next){
     userDAO.list(function(err, result){
-        if(err){
-            return next(err);
-        }
+        if(err) return next(err);
+        
         for(var r of result){
             r.reg_date = moment(r.reg_date)
         }
@@ -74,16 +79,15 @@ router.get("/delete", function(req, res, next){
     })
 })
 
-// router.get("/update", function(req, res){
-//     console.log("회원정보수정");
-//     res.render('user/update')
-// });
-
 router.post("/update", function(req, res){
-    var arr = [];
-    for(var key in req.body){
-        arr.push(req.body[key]);
-    }
+    // var arr = [];
+    // for(var key in req.body){
+    //     arr.push(req.body[key]);
+    // }
+    // arr.push(req.query.no)
+
+    var arr = [req.body, req.query.no]
+
     console.log(arr)
 
     userDAO.update(arr, function(err, result){
@@ -94,6 +98,8 @@ router.post("/update", function(req, res){
         res.redirect('/user/list');
     })
 })
+
+// POST는 body, GET은 query
 
 function moment(time){
     var d = new Date(time)
