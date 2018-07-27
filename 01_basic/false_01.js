@@ -7,7 +7,3 @@ console.log(Boolean(NaN))
 console.log(Boolean('dfasdfasdf'))
 console.log(Boolean(-1))
 console.log(Boolean(123))
-
-
-
-

@@ -1,58 +1,79 @@
 var express = require('express');
 var router = express.Router();
-var middle = require('./middelware.js')
-var userDAO = require('../models/dao/userDAO');
 
-router.get("/login", function(req, res){
-    console.log("로그인");
+var userDAO = require('../models/dao/userDAO');
+var guestBookDAO = require('../models/dao/guestBookDAO');
+var middle = require('./middleware.js');
+
+router.get("/login", function (req, res) {
     res.render('user/login')
 });
 
-router.get("/logout", function(req, res){
-    console.log("로그아웃");
-    req.session.destroy();
-    res.clearCookie('user');
-    res.redirect('/');
+router.get("/logout", function (req, res) {
+    req.session.destroy()
+    res.clearCookie('token')
+    res.redirect('/')
 });
 
-router.post("/login", function(req, res){
-    var id = req.body.id
-    var pw = req.body.pw
-    var arr = [id,pw]
+router.post("/login", function (req, res, next) {
+    var arr = [req.body.id,req.body.pw]
 
     userDAO.login(arr, function(err, result){
-        if(err){
-            // next(err);
-            return next(err);;
+        if (err) return next(err);
+        if(result && req.body.keep){
+            
+            req.session.user = result   
+
+            userDAO.removeToken(result.no, function(err){
+                if (err) return next(err);
+                var uuid = UUID()
+                var params = {'token':uuid, 'user_no':result.no, 'max_date': nowAddOneDay()}
+    
+                userDAO.makeToken(params, function(err){
+                    if (err) return next(err);
+                    res.cookie('token', uuid, {
+                        maxAge: 1000 * 60 * 60 * 24, // 1시간
+                        httpOnly: true,
+                    });
+                    res.redirect('/')
+                })
+            })
+
+
+        }else if(result && !req.body.keep){
+            req.session.user = result
+            res.redirect('/')
+        }else{
+            res.writeHead(401, {"Content-Type" : "text/html; charset=utf-8"})
+            res.end(`<script>
+                        alert("로그인 실패")
+                        location.href = '/user/login'
+                    </script>`)
         }
-        req.session.user = result[0];
-        res.redirect('/');
     })
+
 });
 
-
-router.get("/signup", function(req, res){
-    console.log("회원가입");
+router.get("/signup", function (req, res) {
     res.render('user/signup')
 });
 
-router.post("/signup", function(req, res){
-    // var arr = [req.body]
-    // for(var key in req.body){
-    //     arr.push(req.body[key])
-    // }
-
+router.post("/signup", function(req, res, next) {
+    // 서버에서도 유효성검사 하기
     userDAO.signup(req.body, function(err, result){
-        if(err) return next(err);;
-        // res.render("login");
-        res.redirect('/user/login');
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/')
     })
-});
+})
 
-router.get("/list", middle.isLogin(), function(req, res, next){
+router.get('/list', middle.isLogin() ,function(req, res, next){
+    
     userDAO.list(function(err, result){
-        if(err) return next(err);
-        
+        if (err) {
+            return next(err);
+        }
         for(var r of result){
             r.reg_date = moment(r.reg_date)
         }
@@ -60,51 +81,64 @@ router.get("/list", middle.isLogin(), function(req, res, next){
     })
 })
 
-router.get("/detail", function(req, res, next){
-    userDAO.detail(req.query.no, function(err, result){
-        if(err){
-            return next(err);
-        }
-        result[0].reg_date = moment(result[0].reg_date)
-        res.render('user/userdetail',{user : result[0]});
+router.get('/detail', middle.isLogin(), function(req, res, next){
+    userDAO.detail(req.query.no ,function(err, result){
+        if (err) return next(err);
+        result.reg_date = moment(result.reg_date)
+
+        guestBookDAO.listGuestBook(req.query.no, function(err, gbs){
+            if(err) return next(err);
+            res.render('user/userDetail', {doc : result, gbs : gbs});
+        })
     })
 })
 
-router.get("/delete", function(req, res, next){
-    userDAO.delete(req.query.no, function(err, result){
-        if(err){
-            return next(err);
-        }
-        res.redirect('/user/list');
+router.get('/delete', middle.isMine(), function(req, res, next){
+    userDAO.delete(req.query.no ,function(err, result){
+        if (err) return next(err);
+        res.redirect('/user/list')
     })
 })
 
-router.post("/update", function(req, res){
-    // var arr = [];
-    // for(var key in req.body){
-    //     arr.push(req.body[key]);
-    // }
-    // arr.push(req.query.no)
-
+router.post('/update', middle.isMine(), function(req, res, next){
     var arr = [req.body, req.query.no]
-
-    console.log(arr)
-
     userDAO.update(arr, function(err, result){
-        if(err){
-            return;
-        }
-        // res.render("login");
-        res.redirect('/user/list');
+        if (err) return next(err);
+        res.redirect('/user/list')
     })
 })
 
-// POST는 body, GET은 query
+router.post('/guestbook', middle.isLogin(), function(req, res, next){
+    var params = {
+        user_no : req.body.user_no,
+        content : req.body.content,
+        writer_no : req.session.user.no,
+        writer_id : req.session.user.id,
+    }
+    guestBookDAO.addGuestBook(params, function(err, result){
+        if(err) return next(err);
+        return res.json({success:true})
+    })
+})
+
 
 function moment(time){
     var d = new Date(time)
     d = `${d.getFullYear()}년 ${d.getMonth()}월 ${d.getDate()}일 ${d.getHours()}시 ${d.getMinutes()}분`
-    return d;
+    return d
+}
+
+function UUID(){
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+function nowAddOneDay(){
+    return new Date(new Date().getTime() + (1000*60*60*24));
 }
 
 module.exports = router;

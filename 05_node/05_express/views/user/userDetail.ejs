@@ -2,57 +2,124 @@
 <html>
 <head>
     <%- include ../common/head.ejs %>
+    <style>
+        .gb_container{
+            width: 400px;
+        }
+        .gb_container #gb_content{
+            width: 70%;
+            height: 50px;
+        }
+        .gb_container #gb_submit{
+            width: 20%;
+            height: 60px;
+            vertical-align: top;
+        }
+        .gb_list{
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1><%=user.name%>님의 회원정보 입니다</h1>
-    <p>가입일 : <%= user.reg_date%></p>
+    <h1><%=doc.name%>님의 회원정보 입니다</h1>
+    <p>가입일 : <%=doc.reg_date%></p>
 
-    <form action="/user/update?no=<%=user.no%>" method="POST">
+    <form action="/user/update?no=<%=doc.no%>" method="POST">
         <p>
-            id : <input type="text" name="id" value="<%=user.id%>">
+            id : <input type="text" name="id" value="<%=doc.id%>" disabled>
         </p>
         <p>
-            pw : <input type="password" name="pw" value="<%=user.pw%>">
+            pw : <input type="password" name="pw" value="<%=doc.pw%>">
         </p>
         <p>
-            이름 : <input type="text" name="name" value="<%=user.name%>">
+            이름 : <input type="text" name="name" value="<%=doc.name%>">
         </p>
         <p>
-            나이 : <input type="number" name="age" value="<%=user.age%>">
+            나이 : <input type="number" name="age" value="<%=doc.age%>">
         </p>
-        
         <p>
             성별<br>
-            남 : <input type="radio" name="gender" value="M" <%=user.gender=='M' ? 'checked' : ''%>>
-            여 : <input type="radio" name="gender" value="F" <%=user.gender=='F' ? 'checked' : ''%>>
+            남 : <input type="radio" name="gender" value="M" <%= doc.gender=='M' ? 'checked' : '' %>>
+            여 : <input type="radio" name="gender" value="F" <%= doc.gender=='F' ? 'checked' : '' %>>
         </p>
         <p>
-            <!-- 폼테크 안에 버튼타입이 submit 이면 무조건 submit 함.-->
-            <button type="submit" id="update_btn">회원정보 수정</button>
-            <button type="button" id="delete_btn">회원 삭제</button>
-
+            <%if(user.no==doc.no){ %>
+                <button type="submit" id="update_btn">회원정보 수정</button>
+                <button type="button" id="delete_btn">회원 삭제</button>
+            <%} %>
         </p>
     </form>
 
     <h3>메뉴</h3>
     <ul>
+        <li><a href="/user/list">리스트</a></li>
         <li><a href="/">홈으로</a></li>
     </ul>
 
+    <div class="gb_container">
+        <textarea id="gb_content"></textarea>
+        <button id="gb_submit">방명록 작성</button>
+        <div class="gb_list">
+            <ul>
+                <% for(var gb of gbs){ %>
+                    <li><%=gb.content%> | <%=gb.writer_id%> | <%=gb.reg_date%></li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
     <script>
-        $("#delete_btn").on("click", function(){
-            if(confirm('정말로 삭제하시겠습니까?')){
-                location.href = '/user/delete?no=<%=user.no%>'
+        $('#gb_submit').click(function(){
+            var content = $('#gb_content').val()
+            if(!content){
+                alert('방명록을 입력하세요!')
+                return
+            }
+            $.ajax({
+                url : '/user/guestbook',
+                method : 'post',
+                data : {
+                    content : content,
+                    user_no : '<%=doc.no%>'
+                },
+                dataType : 'json',
+                success : function(res){
+                    if(res.success){
+                        $('#gb_content').val('')
+                        var html = `<li class="item">
+                                        ${content}| <%=user.id%> | 방금
+                                    </li>`
+                        $('.gb_list ul').prepend(html)
+                    }
+                },
+                error : function(err){
+                    console.log(err)
+                    alert('서버오류!')
+                }
+            })
+        })
+
+        $('#delete_btn').on('click', function(){
+            if(isMine() && confirm('정말로 삭제하겠습니까?')){
+                location.href = '/user/delete?no=<%=doc.no%>'
             }
         })
 
-        $("#update_btn").on("click", function(){
-            if(confirm('정말로 수정 하시겠습니까?')){
-                return true;
+        $('form').on('submit', function(){
+            if(isMine() && confirm('정말로 수정하시겠습니까?')){
+                return true
             }else{
-                return false;
+                return false
             }
         })
+        
+        function isMine(){
+            if('<%=user.no%>'!=='<%=doc.no%>'){
+                alert('본인 정보만 수정/삭제가 가능합니다')
+                return false
+            }
+            return true
+        }
     </script>
 </body>
 </html>

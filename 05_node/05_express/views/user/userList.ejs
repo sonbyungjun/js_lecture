@@ -14,25 +14,25 @@
             <th>성별</th>
             <th>가입날짜</th>
         </tr>
-        <tr>
-            <% for(var user of users){ %>
-                <tr>
-                    <td>
-                        <a href="/user/detail?no=<%=user.no%>"><%= user.id %></a>
-                    </td>
-                    <td><%= user.name %></td>
-                    <td><%= user.age %></td>
-                    <td><%= user.gender %></td>
-                    <td><%= user.reg_date %></td>
-                </tr>
-            <% } %>
-            <!-- 회원 리스트-->
-        </tr>
+        <% for(var user of users){ %>
+            <tr>
+                <td>
+                    <a href="/user/detail?no=<%=user.no%>">
+                        <%= user.id %>
+                    </a>
+                </td>
+                <td><%= user.name %></td>
+                <td><%= user.age %></td>
+                <td><%= user.gender %></td>
+                <td><%= user.reg_date %></td>
+            </tr>
+        <% } %>
     </table>
 
     <h3>메뉴</h3>
     <ul>
-        <li><a href="/">홈</a></li>
+        <li><a href="/">홈으로</a></li>
     </ul>
+
 </body>
 </html>

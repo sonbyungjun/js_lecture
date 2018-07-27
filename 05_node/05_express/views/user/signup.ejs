@@ -2,13 +2,21 @@
 <html>
 <head>
     <%- include ../common/head.ejs %>
+    <style>
+        strong.warning{
+            display: block;
+            font-size: 0.8em;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>회원가입 입니다</h1>
 
-    <form action="/user/signup" method="POST">
+    <form action="" method="POST" id="signupForm">
         <p>
             id : <input type="text" name="id">
+            <strong class="warning"></strong>
         </p>
         <p>
             pw : <input type="password" name="pw">
@@ -34,5 +42,120 @@
         <li><a href="/">홈</a></li>
         <li><a href="/user/login">로그인</a></li>
     </ul>
+
+    <script>
+
+        // 포문으로 다른 항목도
+        $('#signupForm input[name=id]').on('keyup', function(){
+            var id = $(this).val();
+            var idPattern = /^([0-9a-zA-Z_]){2,8}$/;
+            if(!id || !idPattern.test(id)){
+                $(this).next().text('아이디 형식을 확인하세요.')
+                return false
+            }else{
+                $(this).next().html('')
+            }})
+
+        $('')
+
+
+
+        function valids(){
+            var rule = [
+                {
+                    name : 'id',
+                    val : $(this).val(),
+                    Pattern : /^([0-9a-zA-Z_]){2,8}$/,
+                    message : '아이디 형식을 확인하세요.'
+                },
+                {
+                    name : 'pw',
+                    val : $(this).val(),
+                    Pattern : /^([0-9a-zA-Z_]){2,8}$/,
+                    message : '패스워드 형식을 확인하세요.'
+                },
+                {
+                    name : 'name',
+                    val : $('#signupForm input[name=name]').val(),
+                    Pattern : /^([가-힣a-zA-Z]){1,20}$/,
+                    message : '이름 형식을 확인하세요.'
+                },
+                {
+                    name : 'age',
+                    val : parseInt($('#signupForm input[name=age]').val()),
+                    Pattern : /^([0-9]){1,}$/,
+                    message : '나이 형식을 확인하세요.'
+                },
+                {
+                    name : 'gender',
+                    val : $("#signupForm input[name=gender]:checked").val(),
+                    Pattern : null,
+                    message : '성별을 선택하세요.'
+                }
+            ]
+
+            for(var ele of rule){
+                if(!ele.val || !ele.Pattern.test(ele.val)){
+                    $('')
+                    $(ele.val).next().text(ele.message)
+                    return false
+                }else{
+                    $(ele.val).next().html('')
+                    }
+                }
+        }
+
+
+
+
+
+
+        $('#signupForm').on('submit', function(){
+            return valid()
+        })
+
+        function valid(){
+            var rule = [
+                {
+                    name : 'id',
+                    val : $('#signupForm input[name=id]').val(),
+                    Pattern : /^([0-9a-zA-Z_]){2,8}$/,
+                    message : '아이디 형식을 확인하세요.'
+                },
+                {
+                    name : 'pw',
+                    val : $('#signupForm input[name=pw]').val(),
+                    Pattern : /^([0-9a-zA-Z_]){2,8}$/,
+                    message : '패스워드 형식을 확인하세요.'
+                },
+                {
+                    name : 'name',
+                    val : $('#signupForm input[name=name]').val(),
+                    Pattern : /^([가-힣a-zA-Z]){1,20}$/,
+                    message : '이름 형식을 확인하세요.'
+                },
+                {
+                    name : 'age',
+                    val : parseInt($('#signupForm input[name=age]').val()),
+                    Pattern : /^([0-9]){1,}$/,
+                    message : '나이 형식을 확인하세요.'
+                },
+                {
+                    name : 'gender',
+                    val : $("#signupForm input[name=gender]:checked").val(),
+                    Pattern : null,
+                    message : '성별을 선택하세요.'
+                }
+            ]
+
+            for(var ele of rule){
+                if(!ele.val || !ele.Pattern.test(ele.val)){
+                    alert(ele.message)
+                    return false
+                }
+            }
+            return true
+        }
+    </script>
 </body>
 </html>
