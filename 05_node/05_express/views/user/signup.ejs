@@ -20,17 +20,21 @@
         </p>
         <p>
             pw : <input type="password" name="pw">
+            <strong class="warning"></strong>
         </p>
         <p>
             이름 : <input type="text" name="name">
+            <strong class="warning"></strong>
         </p>
         <p>
             나이 : <input type="number" name="age">
+            <strong class="warning"></strong>
         </p>
         <p>
             성별<br>
             남 : <input type="radio" name="gender" value="M">
             여 : <input type="radio" name="gender" value="F">
+            <strong class="warning"></strong>
         </p>
         <p>
             <button type="submit">회원가입</button>
@@ -46,63 +50,57 @@
     <script>
 
         // 포문으로 다른 항목도
-        $('#signupForm input[name=id]').on('keyup', function(){
-            var id = $(this).val();
-            var idPattern = /^([0-9a-zA-Z_]){2,8}$/;
-            if(!id || !idPattern.test(id)){
-                $(this).next().text('아이디 형식을 확인하세요.')
-                return false
-            }else{
-                $(this).next().html('')
-            }})
-
-        $('')
-
-
+        $('#signupForm').on('keyup', function(){
+            return valids
+            })
 
         function valids(){
             var rule = [
                 {
                     name : 'id',
-                    val : $(this).val(),
+                    input : '#signupForm input[name=id]',
                     Pattern : /^([0-9a-zA-Z_]){2,8}$/,
                     message : '아이디 형식을 확인하세요.'
                 },
                 {
                     name : 'pw',
-                    val : $(this).val(),
+                    val : '#signupForm input[name=pw]',
                     Pattern : /^([0-9a-zA-Z_]){2,8}$/,
                     message : '패스워드 형식을 확인하세요.'
                 },
                 {
                     name : 'name',
-                    val : $('#signupForm input[name=name]').val(),
+                    val : '#signupForm input[name=name]',
                     Pattern : /^([가-힣a-zA-Z]){1,20}$/,
                     message : '이름 형식을 확인하세요.'
                 },
                 {
                     name : 'age',
-                    val : parseInt($('#signupForm input[name=age]').val()),
+                    val : '#signupForm input[name=age]',
                     Pattern : /^([0-9]){1,}$/,
                     message : '나이 형식을 확인하세요.'
                 },
                 {
                     name : 'gender',
-                    val : $("#signupForm input[name=gender]:checked").val(),
+                    val : '#signupForm input[name=gender]:checked',
                     Pattern : null,
                     message : '성별을 선택하세요.'
                 }
             ]
-
+            
             for(var ele of rule){
-                if(!ele.val || !ele.Pattern.test(ele.val)){
-                    $('')
-                    $(ele.val).next().text(ele.message)
-                    return false
-                }else{
-                    $(ele.val).next().html('')
+                $(ele.val).on('keyup', function(){
+                    var id = $(this).val();
+                    var idPattern = ele.Pattern;
+                    if(!id || !idPattern.test(id)){
+                        $(this).next().text(ele.message)
+                        return false
+                    }else{
+                        $(this).next().html('')
                     }
-                }
+                })    
+            }
+            return true
         }
 
 
