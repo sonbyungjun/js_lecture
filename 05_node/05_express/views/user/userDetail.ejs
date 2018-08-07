@@ -4,22 +4,24 @@
     <%- include ../common/head.ejs %>
     <style>
         .gb_container{
-            width: 400px;
+            width: 500px;
         }
-        .gb_container #gb_content{
-            width: 70%;
-            height: 50px;
-        }
-        .gb_container #gb_submit{
-            width: 20%;
-            height: 60px;
-            vertical-align: top;
+        .gb_container .input-group-append{
+            cursor: pointer;
         }
         .gb_list{
             width: 100%;
         }
+        .gb_list li{
+            margin: 15px 0px;
+            background-color: lightgray;
+        }
+
     </style>
 </head>
+
+    <%- include ../common/nav.ejs %>
+
 <body>
     <h1><%=doc.name%>님의 회원정보 입니다</h1>
     <p>가입일 : <%=doc.reg_date%></p>
@@ -50,27 +52,38 @@
         </p>
     </form>
 
-    <h3>메뉴</h3>
-    <ul>
-        <li><a href="/user/list">리스트</a></li>
-        <li><a href="/">홈으로</a></li>
-    </ul>
-
     <div class="gb_container">
-        <textarea id="gb_content"></textarea>
-        <button id="gb_submit">방명록 작성</button>
+        <!-- <textarea id="gb_content"></textarea>
+        <button id="gb_submit">방명록 작성</button> -->
+        <div class="input-group">
+            <textarea class="form-control gb_content" aria-label="With textarea"></textarea>
+            <div class="input-group-append" data-toggle="tooltip" data-placement="top" title="방명록 작성 버튼 입니다.">
+                <span class="input-group-text gb_submit">박명록 작성</span>
+            </div>
+        </div>
         <div class="gb_list">
             <ul>
                 <% for(var gb of gbs){ %>
-                    <li><%=gb.content%> | <%=gb.writer_id%> | <%=gb.reg_date%></li>
+                    <li class="item">
+                            <span class="text">
+                                    <%=gb.content%>
+                            </span>
+                             | <%=gb.writer_id%> | <%=gb.reg_date%> | 글번호
+                            <span class="noKey"> <%=gb.no%> </span>
+                    <button class="gb_list_delete">삭제</button>
+                    <button class="gb_list_modify">수정</button>
+                    </li>
                 <% } %>
             </ul>
         </div>
     </div>
 
+    <%- include ../common/js.ejs %>
+
     <script>
-        $('#gb_submit').click(function(){
-            var content = $('#gb_content').val()
+
+        $('.gb_submit').click(function(){
+            var content = $('.gb_content').val()
             if(!content){
                 alert('방명록을 입력하세요!')
                 return
@@ -85,9 +98,11 @@
                 dataType : 'json',
                 success : function(res){
                     if(res.success){
-                        $('#gb_content').val('')
+                        $('.gb_content').val('')
                         var html = `<li class="item">
-                                        ${content}| <%=user.id%> | 방금
+                                        <span class="text">${content}</span>| <%=user.id%> | 방금 |
+                                    <button class="gb_list_delete">삭제</button>
+                                    <button class="gb_list_modify">수정</button>
                                     </li>`
                         $('.gb_list ul').prepend(html)
                     }
@@ -98,6 +113,91 @@
                 }
             })
         })
+        
+        //삭제
+        $("body").on("click", ".gb_list_delete", function(){
+            // confirm("삭제하시겠습니까?")
+            var noKey = $(this).parents(".item").find(".noKey").text()
+            $.ajax({
+                url : '/user/guestbook/delete',
+                method : 'get',
+                data : noKey,
+                dataType : 'json',
+                success : function(res){
+                    if(res.success){
+                        $(this).parents(".item").remove()
+                    }
+                },
+                error : function(err){
+                    console.log(err)
+                    alert('서버오류!')
+                }
+            })
+        })
+        
+
+        //수정
+        $("body").on("click", ".gb_list_modify", function(){
+            var val = $(this).parents(".item").find(".text").text().trim()
+            var html = "<input type='text' class='gb_modify_input' value='"+val+"'>"
+            html += "<input type='hidden' class='origin_list' value='"+val+"'>"
+            $(this).parents(".item").find(".text").html(html)
+            $(this).hide()
+            var btn = "<button class='gb_modify_com'>수정완료</button>\
+                        <button class='gb_modify_cancel'>수정취소</button>"
+            $(this).parent().append(btn)
+        })
+
+
+        //수정완료
+        $("body").on("click", ".gb_modify_com", function(){
+                var gbModify = $(".gb_modify_input").val()
+                var noKey = $(this).parents(".item").find(".noKey").text()
+                if(gbModify.length<1){
+                    alert("수정된 댓글을 입력하세요")
+                    return
+                }
+                var htmlM = `<li class="item">
+                                    <span class="text">${gbModify}</span>| <%=user.id%> | 방금 |
+                                <button class="gb_list_delete">삭제</button>
+                                <button class="gb_list_modify">수정</button>
+                                </li>`
+                $.ajax({
+                    url : '/user/guestbook/update',
+                    method : 'get',
+                    data : {
+                        content : gbModify,
+                        no : noKey
+                    },
+                    dataType : 'json',
+                    success : function(res){
+                        if(res.success){
+                            $(this).parents(".item").html(htmlM)
+                        }
+                    },
+                    error : function(err){
+                        console.log(err)
+                        alert('서버오류!')
+                    }
+                })
+        })
+
+        
+        // 수정취소
+        $("body").on("click", ".gb_modify_cancel", function(){
+            var origin = $(this).parents(".text").find(".origin_list")
+            var val = origin.val()
+            origin.remove()
+            var gbModifyCancel = `<li class="item">
+                                    <span class="text">${val}</span>| <%=user.id%> | 방금 |
+                                 <button class="gb_list_delete">삭제</button>
+                                 <button class="gb_list_modify">수정</button>
+                                 </li>`
+            $(this).parents(".item").html(gbModifyCancel)
+        })     
+
+        
+
 
         $('#delete_btn').on('click', function(){
             if(isMine() && confirm('정말로 삭제하겠습니까?')){

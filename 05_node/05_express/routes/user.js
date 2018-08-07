@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var moment = require('moment');
+moment.locale('ko');
 
 var userDAO = require('../models/dao/userDAO');
 var guestBookDAO = require('../models/dao/guestBookDAO');
@@ -88,6 +90,9 @@ router.get('/detail', middle.isLogin(), function(req, res, next){
 
         guestBookDAO.listGuestBook(req.query.no, function(err, gbs){
             if(err) return next(err);
+            for(var gb of gbs){
+                gb.reg_date = moment(gb.reg_date).fromNow()
+            }
             res.render('user/userDetail', {doc : result, gbs : gbs});
         })
     })
@@ -108,6 +113,11 @@ router.post('/update', middle.isMine(), function(req, res, next){
     })
 })
 
+
+
+
+
+
 router.post('/guestbook', middle.isLogin(), function(req, res, next){
     var params = {
         user_no : req.body.user_no,
@@ -120,6 +130,24 @@ router.post('/guestbook', middle.isLogin(), function(req, res, next){
         return res.json({success:true})
     })
 })
+
+router.get('/guestbook/delete', middle.isMine(), function(req, res, next){
+    guestBookDAO.delGuestBook(no ,function(err, result){
+        if (err) return next(err);
+        return res.json({success:true})
+    })
+})
+
+router.post('/guestbook/update', middle.isMine(), function(req, res, next){
+    var arr = [req.body.content , req.query.no]
+    guestBookDAO.updateGuestBook(arr, function(err, result){
+        if (err) return next(err);
+        return res.json({success:true})
+    })
+})
+
+
+
 
 
 function moment(time){

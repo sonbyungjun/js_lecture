@@ -2,30 +2,34 @@
 <html>
 <head>
     <%- include ../common/head.ejs %>
+
 </head>
+    <%- include ../common/nav.ejs %>
+
 <body>
-    <h1>로그인 입니다</h1>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-0 col-md-2"></div>
+            <div class="col-sm-12 col-md-8">
+                <form class="form-signin" action="/user/login" method="POST">
+                    <h1 class="h3 mb-3 font-weight-normal">로그입 입니다.</h1>
+                    <input type="text" name="id" class="form-control" placeholder="Id" required autofocus>
+                    <input type="password" name="pw" class="form-control" placeholder="Password" required>
+                    <div class="checkbox mb-3">
+                        <label>
+                        <input type="checkbox" name="keep" id="keep"> 로그인 유지
+                        </label>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+                </form>
+            </div>
+            <div class="col-sm-0 col-md-2"></div>
+        </div>
+    </div>
 
-    <form action="/user/login" method="POST">
-        <p>
-            id : <input type="text" name="id">
-        </p>
-        <p>
-            pw : <input type="password" name="pw">
-        </p>
-        <p>
-            <label for="keep">로그인 유지</label>
-            <input type="checkbox" name="keep" id="keep">
-        </p>
-        <p>
-            <button type="submit">로그인</button>
-        </p>
-    </form>
-
-    <h3>메뉴</h3>
-    <ul>
-        <li><a href="/">홈</a></li>
-        <li><a href="/user/signup">회원가입</a></li>
-    </ul>
+    
+    <%- include ../common/js.ejs %>
 </body>
 </html>
+

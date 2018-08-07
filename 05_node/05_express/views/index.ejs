@@ -1,27 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <%- include ./common/head.ejs %>
+
 </head>
 <body>
-    <h1>홈화면 입니다</h1>
-    <% if(user) {%>
-        <h4>안녕하세요 <%=user.name%>님</h4>
-    <%}else{ %>
-        <h4>안녕하세요 로그인 하세요.</h4>
-    <%} %>
+    <%- include ./common/nav.ejs %>
+    
+    <main role="main" class="container">
+        
+        <div class="jumbotron">
+            <h1 class="display-4">
+                <i class="fa fa-smile-o" aria-hidden="true"></i>
+                <% if(user) {%>
+                    안녕하세요 <%=user.name%>님
+                <%}else{ %>
+                    안녕하세요 로그인 하세요.
+                <%} %>    
+            </h1>
+            <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+            <hr class="my-4">
+            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+                <% if(!user) {%>
+                    <a class="btn btn-primary btn-lg" href="/user/login">로그인</a>
+                    <a class="btn btn-success btn-lg" href="/user/signup">회원가입</a>
+                <%} %> 
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#company">
+                    회사정보
+                </button>
+            </div>
+    </main>
 
-    <h3>메뉴</h3>
-    <ul>
-        <% if(user){ %>
-            <li><a href="/user/logout">로그아웃</a></li>
-            <li><a href="/user/list">회원목록</a></li>
-        <% }else{ %>
-            <li><a href="/user/login">로그인</a></li>
-            <li><a href="/user/signup">회원가입</a></li>
-        <% } %>
-    </ul>
-
+    <!-- Button trigger modal -->
+      
+      <!-- Modal -->
+      <div class="modal fade" id="company" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">회사정보</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              저희 회사는 ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ입니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    <%- include ./common/js.ejs %>
 </body>
 </html>
