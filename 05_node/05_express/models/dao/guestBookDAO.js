@@ -37,7 +37,7 @@ var guestBookDAO = {
     },
 
     updateGuestBook : function(arr, callback){
-        var sql = 'update guest_books set ? where no = ?' // ` 쓰지 마라
+        var sql = 'update guest_books set content = ? where no = ?' // ` 쓰지 마라
         con.query(sql, arr, function(err, result, fields) {
             if(err){
                 callback(err)

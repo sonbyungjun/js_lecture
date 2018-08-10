@@ -40,6 +40,30 @@ module.exports =  {
                         </script>`)
             }
         }
+    },
+
+    isMineGuestbook : function(){
+        return function(req, res, next){
+
+            if(!req.session.user) {
+                res.writeHead(401, {"Content-Type" : "text/html; charset=utf-8"})
+                res.end(`<script>
+                            alert("로그인 해주세요")
+                            location.href = '/user/login'
+                        </script>`)
+            }
+
+            var writer_no = req.query.writer_no ? req.query.writer_no : req.body.writer_no
+            if(writer_no == req.session.user.no){
+                return next();
+            }else{
+                res.writeHead(401, {"Content-Type" : "text/html; charset=utf-8"})
+                res.end(`<script>
+                            alert("본인의 댓글이 아닙니다.")
+                            window.history.back()
+                        </script>`)
+            }
+        }
     }
 
         // isMine : function(writer){

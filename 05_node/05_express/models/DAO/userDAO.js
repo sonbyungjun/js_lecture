@@ -24,8 +24,9 @@ var userDAO = {
         })
     },
 
-    list : function(callback){
-        var sql = `select * from users`
+    list : function(obj, callback){
+        var likeSql = obj.search ? `where ${obj.sub} like '%${obj.search}%'` : ''
+        var sql = `select * from users ${likeSql}`
         con.query(sql, function(err, results, fields) {
             if(err){
                 callback(err)

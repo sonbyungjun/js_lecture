@@ -64,15 +64,16 @@
         <div class="gb_list">
             <ul>
                 <% for(var gb of gbs){ %>
-                    <li class="item">
-                            <span class="text">
-                                    <%=gb.content%>
-                            </span>
-                             | <%=gb.writer_id%> | <%=gb.reg_date%> | 글번호
-                            <span class="noKey"> <%=gb.no%> </span>
-                    <button class="gb_list_delete">삭제</button>
-                    <button class="gb_list_modify">수정</button>
-                    </li>
+                    <li class="item" data-no="<%=gb.no%>" data-content="<%=gb.content%>" data-writer="<%=gb.writer_no%>">
+                        <span class="text">
+                            <%=gb.content%>
+                        </span>
+                        | <%=gb.writer_id%> | <%=gb.reg_date%>
+                            <% if(user.no === gb.writer_no){ %>
+                                <button class="gb_list_delete">삭제</button>
+                                <button class="gb_list_modify">수정</button>
+                            <% } %>
+                        </li>
                 <% } %>
             </ul>
         </div>
@@ -117,15 +118,18 @@
         //삭제
         $("body").on("click", ".gb_list_delete", function(){
             // confirm("삭제하시겠습니까?")
-            var noKey = $(this).parents(".item").find(".noKey").text()
+            var item = $(this).parents(".item")
             $.ajax({
                 url : '/user/guestbook/delete',
                 method : 'get',
-                data : noKey,
+                data : {
+                    no : item.data('no'),
+                    writer_no : item.data('writer')
+                },
                 dataType : 'json',
                 success : function(res){
                     if(res.success){
-                        $(this).parents(".item").remove()
+                        item.remove()
                     }
                 },
                 error : function(err){
@@ -151,8 +155,8 @@
 
         //수정완료
         $("body").on("click", ".gb_modify_com", function(){
+                var item = $(this).parents('.item')
                 var gbModify = $(".gb_modify_input").val()
-                var noKey = $(this).parents(".item").find(".noKey").text()
                 if(gbModify.length<1){
                     alert("수정된 댓글을 입력하세요")
                     return
@@ -164,15 +168,16 @@
                                 </li>`
                 $.ajax({
                     url : '/user/guestbook/update',
-                    method : 'get',
+                    method : 'post',
                     data : {
                         content : gbModify,
-                        no : noKey
+                        no : item.data('no'),
+                        writer_no : item.data('writer'),
                     },
                     dataType : 'json',
                     success : function(res){
                         if(res.success){
-                            $(this).parents(".item").html(htmlM)
+                            item.html(htmlM)
                         }
                     },
                     error : function(err){
@@ -185,14 +190,10 @@
         
         // 수정취소
         $("body").on("click", ".gb_modify_cancel", function(){
-            var origin = $(this).parents(".text").find(".origin_list")
-            var val = origin.val()
-            origin.remove()
-            var gbModifyCancel = `<li class="item">
-                                    <span class="text">${val}</span>| <%=user.id%> | 방금 |
-                                 <button class="gb_list_delete">삭제</button>
-                                 <button class="gb_list_modify">수정</button>
-                                 </li>`
+            var origin = $(this).parents(".item").data('content')
+            var gbModifyCancel = `<span class="text">${origin}</span>| <%=user.id%> | 방금 |
+                                  <button class="gb_list_delete">삭제</button>
+                                  <button class="gb_list_modify">수정</button>`
             $(this).parents(".item").html(gbModifyCancel)
         })     
 

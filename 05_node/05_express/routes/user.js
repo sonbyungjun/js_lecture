@@ -71,15 +71,20 @@ router.post("/signup", function(req, res, next) {
 })
 
 router.get('/list', middle.isLogin() ,function(req, res, next){
+
+    var searchObj = {
+        search : req.query.search ? req.query.search : null,
+        sub : req.query.sub ? req.query.sub : 'id'
+    }
     
-    userDAO.list(function(err, result){
+    userDAO.list(searchObj, function(err, result){
         if (err) {
             return next(err);
         }
         for(var r of result){
-            r.reg_date = moment(r.reg_date)
+            r.reg_date = moment(r.reg_date).fromNow()
         }
-        res.render('user/userList', {users : result});
+        res.render('user/userList', {users : result, searchObj : searchObj});
     })
 })
 
@@ -113,6 +118,13 @@ router.post('/update', middle.isMine(), function(req, res, next){
     })
 })
 
+router.get("/board", function (req, res) {
+    res.render('user/board')
+});
+
+router.get("/writing", function (req, res) {
+    res.render('user/writing')
+});
 
 
 
@@ -131,15 +143,16 @@ router.post('/guestbook', middle.isLogin(), function(req, res, next){
     })
 })
 
-router.get('/guestbook/delete', middle.isMine(), function(req, res, next){
-    guestBookDAO.delGuestBook(no ,function(err, result){
+router.get('/guestbook/delete', middle.isMineGuestbook(), function(req, res, next){
+    guestBookDAO.delGuestBook(req.query.no ,function(err, result){
         if (err) return next(err);
         return res.json({success:true})
     })
 })
 
-router.post('/guestbook/update', middle.isMine(), function(req, res, next){
-    var arr = [req.body.content , req.query.no]
+router.post('/guestbook/update',middle.isMineGuestbook(), function(req, res, next){
+    var arr = [req.body.content , req.body.no]
+    console.log(arr)
     guestBookDAO.updateGuestBook(arr, function(err, result){
         if (err) return next(err);
         return res.json({success:true})
