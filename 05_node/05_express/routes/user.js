@@ -126,6 +126,25 @@ router.get("/writing", function (req, res) {
     res.render('user/writing')
 });
 
+router.post("/writing", function(req, res, next) {
+    console.log(req.body)
+    var params = {
+        user_no : req.session.user.no,
+        title : req.body.title,
+        content : req.body.content,
+        writer_no : req.session.user.no,
+        writer_id : req.session.user.id,
+    }
+    // 서버에서도 유효성검사 하기
+    boardDAO.addBoard(params, function(err, result){
+        if (err) {
+            return next(err);
+        }
+        console.log(result)
+        res.redirect('/user/board')
+    })
+})
+
 
 
 
