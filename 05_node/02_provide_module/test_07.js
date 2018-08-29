@@ -14,7 +14,7 @@ npm : node pakage module
 var request = require('request');
 
 //요청하겠다  // 이 주소로    // 요청이 끝나면 실행되는 함수
-request('http://www.naver.com', function (err, res, body) {
+request('https://m.map.naver.com/bus/station.nhn?stationID=89213', function (err, res, body) {
                                       //에러, 응답, 읽어온 내용
     if(err || res.statusCode != 200){
         console.log('err:', err)

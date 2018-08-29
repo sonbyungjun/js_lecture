@@ -43,9 +43,12 @@ app.use(function(req, res, next){
 var index = require("./routes/index");
 var user = require("./routes/user");
 var board = require("./routes/board");
+
 app.use("/", index);
 app.use("/user", user);
 app.use("/board", board);
+
+
 
 
 app.set('views', path.join(__dirname, 'views'));
