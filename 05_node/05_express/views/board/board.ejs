@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include ../common/head.ejs %>
+
+</head>
+    <%- include ../common/nav.ejs %>
+
+<body>
+    
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>글쓴이</th>
+                <th>등록일</th>
+                <th>조회수</th>
+                <th>추천</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(var doc of docs){ %>
+                <tr>
+                    <td><%= doc.no %></td>
+                    <td>
+                        <a href="/board/boardview?no=<%=doc.no%>">
+                            <%= doc.title %>
+                        </a>
+                    </td>
+                    <td><%= doc.writer_id %></td>
+                    <td><%= doc.reg_date %></td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    <a type="button" class="btn btn-primary pull-right"  href="/board/writing">글쓰기</button>
+    
+    <%- include ../common/js.ejs %>
+</body>
+</html>
+
+
+<script>
+
+</script>

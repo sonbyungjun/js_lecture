@@ -22,6 +22,8 @@
                         </label>
                     </div>
                     <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+                    <a id="kakao-login-btn" href="javascript:loginWithKakao()">
+                    </a>
                 </form>
             </div>
             <div class="col-sm-0 col-md-2"></div>
@@ -30,6 +32,55 @@
 
     
     <%- include ../common/js.ejs %>
+    <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script type='text/javascript'>
+        //<![CDATA[
+            // 사용할 앱의 JavaScript 키를 설정해 주세요.
+            Kakao.init('626291140ae94e790fb66319b194a6fc');
+            // 카카오 로그인 버튼을 생성합니다.
+            Kakao.Auth.createLoginButton({
+            container: '#kakao-login-btn',
+            success: function(authObj) {
+                // 로그인 성공시, API를 호출합니다.
+                Kakao.API.request({
+                url: '/v2/user/me',
+                success: function(res) {
+                    // alert(JSON.stringify(res));
+                    login(res, 'KAKAO')
+                },
+                fail: function(error) {
+                    alert(JSON.stringify(error));
+                }
+                });
+            },
+            fail: function(err) {
+                alert(JSON.stringify(err));
+            }
+            });
+        //]]>
+
+        function login(account, type){
+            $.ajax({
+                type : 'post',
+                url : '/user/api_login',
+                data : {
+                    id : account.id,
+                    name : account.properties.nickname,
+                    profile_url : account.properties.profile_image,
+                    type : type
+                },
+                dataType : 'json',
+                success : function(data){
+                    if(data.success){
+                        location.href = '/'
+                    }
+                },
+                error : function(err){
+                    alert('서버에러')
+                }
+            })
+        }
+    </script>
 </body>
 </html>
 

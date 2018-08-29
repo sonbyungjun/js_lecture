@@ -26,7 +26,8 @@ var userDAO = {
 
     list : function(obj, callback){
         var likeSql = obj.search ? `where ${obj.sub} like '%${obj.search}%'` : ''
-        var sql = `select * from users ${likeSql}`
+        var sql = `select * from users ${likeSql} order by no desc`
+        sql += ` limit ${obj.startPoint}, ${obj.pageList}`
         con.query(sql, function(err, results, fields) {
             if(err){
                 callback(err)
@@ -36,8 +37,23 @@ var userDAO = {
         })
     },
 
+    count : function(obj, callback){
+        var likeSql = obj.search ? `where ${obj.sub} like '%${obj.search}%'` : ''
+        var sql = `select count(*) as count from users ${likeSql} order by no desc`
+        con.query(sql, function(err, result, fields) {
+            if(err){
+                callback(err)
+                return
+            }
+            callback(null, result[0]);
+        })
+    },
+
     detail : function(no, callback){
-        var sql = `select * from users where no = ?`
+        var sql = `select u.*, p.origin_name, p.system_name, p.path
+                        from users u left join profiles p
+                    on u.no = p.user_no 
+                        where u.no = ?`
         con.query(sql, no, function(err, result, fields) {
             if(err){
                 callback(err)
@@ -116,7 +132,39 @@ var userDAO = {
             callback(null, result[0]);
         })
     },
+
+    uploadProfiles : function(param, callback){
+        var sql = `insert into profiles set ?`
+        con.query(sql, param, function(err, result, fields){
+            if(err) return callback(err)
+            callback(null, result)
+        })
+    },
+
+    signupApi : function(param, callback){
+        var sql = 'insert into api_users set ?'
+        con.query(sql, param, function(err, result, fields){
+            if(err) return callback(err)
+            callback(null, result)
+        })
+    },
     
+
+    loginApi : function(param, callback){
+        var sql = 'select * from api_users where id = ? and type = ?'
+        con.query(sql, param, function(err, result, fields){
+            if(err) return callback(err)
+            callback(null, result[0])
+        })
+    },
+
+    checkAPi : function(param, callback){
+        var sql = 'select count(*) as count from api_users where id = ? and type = ?'
+        con.query(sql, param, function(err, result, fields){
+            if(err) return callback(err)
+            callback(null, result[0])
+        })
+    }
     
 }
 

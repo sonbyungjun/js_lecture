@@ -46,8 +46,6 @@ var guestBookDAO = {
             callback(null, result);
         })
     }
-
-
 }
 
 module.exports = guestBookDAO;

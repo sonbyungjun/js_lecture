@@ -5,6 +5,14 @@
 </head>
 
     <%- include ../common/nav.ejs %>
+    <style>
+        .page-item{
+            font-size: 20px;
+        }
+        .page-item a{
+            padding: 6px 17px;
+        }
+    </style>
 
 <body>
 
@@ -56,6 +64,44 @@
                <% } %>
             </table>
     </div>
+
+
+    <ul class="pagination pagination-md justify-content-center">
+        <% if(pageObj.firstPage !== 1){%>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%=parseInt(pageObj.firstPage)-parseInt(pageObj.blockPage)%>&sub=<%=searchObj.sub%>&search=<%=searchObj.search%>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%=parseInt(pageObj.nowPage)-1%>&sub=<%=searchObj.sub%>&search=<%=searchObj.search%>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+        <% } %>
+        <% for(var page = pageObj.firstPage; page <= pageObj.lastPage; page++){ %>
+            <li class="page-item <%if(pageObj.nowPage==page){%>active<%}%>">
+                <a class="page-link" href="?page=<%=page%>&sub=<%=searchObj.sub%>&search=<%=searchObj.search%>"><%=page%></a>
+            </li>
+        <% } %>
+        <% if(pageObj.allPage !== pageObj.lastPage){ %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%=parseInt(pageObj.nowPage)+1%>&sub=<%=searchObj.sub%>&search=<%=searchObj.search%>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%=parseInt(pageObj.firstPage)+parseInt(pageObj.blockPage)%>&sub=<%=searchObj.sub%>&search=<%=searchObj.search%>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        <% } %>
+        
+    </ul>
 
         <% }else{ %>
 

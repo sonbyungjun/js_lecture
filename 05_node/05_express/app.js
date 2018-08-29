@@ -42,8 +42,11 @@ app.use(function(req, res, next){
 
 var index = require("./routes/index");
 var user = require("./routes/user");
+var board = require("./routes/board");
 app.use("/", index);
 app.use("/user", user);
+app.use("/board", board);
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -57,6 +60,6 @@ app.use(function (err, req, res, next) {
 	res.end("<h1>오류!</h1>")
 });
 
-app.listen(3000, function () {
-  console.log('3000번 포트 구동중...');
+app.listen(8001, function () {
+  console.log('8001번 포트 구동중...');
 });
